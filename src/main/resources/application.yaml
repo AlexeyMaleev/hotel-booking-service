@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: hotels-app
+
+  config:
+    import: "file:./db-secret.yaml"
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+
+  datasource:
+    url: "jdbc:postgresql://localhost:5438/hotels_db"
+    #    username:  - в db-secret.yaml
+    #    password: - в db-secret.yaml
+    driver-class-name: org.postgresql.Driver
+
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/bookingdatabase?authSource=admin
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    schemas: public
+
+app:
+  kafka:
+    kafkaMessageTopic: "hotel-statistics-topic"
+    kafkaMessageGroupId: "statistics-group-id"
