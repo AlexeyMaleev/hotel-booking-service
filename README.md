@@ -1,4 +1,6 @@
-Hotel Booking Service
+# Hotel Booking Service
+Backend service for managing hotel bookings.
+
 
 Сервис бронирования отелей с событийной архитектурой для сбора аналитики. 
 Проект реализует полный цикл управления отелями, комнатами и бронированиями 
