@@ -1,155 +1,280 @@
 # Hotel Booking Service
+
 Backend service for managing hotel bookings.
 
+Production-like backend service for managing hotel bookings.  
+The project demonstrates backend development, integration testing,
+and event-driven architecture using modern Java technologies.
 
-Сервис бронирования отелей с событийной архитектурой для сбора аналитики. 
-Проект реализует полный цикл управления отелями, комнатами и бронированиями 
-с разграничением прав доступа.
 ---
 
-Стек технологий
+## 📌 Project Overview
 
-Java 21 / Spring Boot 3.5
-Spring Security: Basic Auth, Role-Based Access Control (USER, ADMIN).
+This service is designed to showcase:
+
+- REST API design with Spring Boot
+- Transactional business logic
+- Role-based access control
+- Integration with external infrastructure (PostgreSQL, Kafka, MongoDB)
+- Automated integration testing with real containers
+
+The project was developed as part of a professional Java backend training program
+and further refined as a portfolio project.
+
 ---
 
-Базы данных:
-PostgreSQL — основное хранилище (пользователи, отели, бронирования).
-MongoDB — хранение логов действий пользователей (статистика).
+## 🛠 Tech Stack
+
+- **Java 21**
+- **Spring Boot**
+  - Spring Web
+  - Spring Data JPA
+  - Spring Security
+  - Spring Validation
+- **PostgreSQL** — main relational database
+- **Kafka** — event streaming
+- **MongoDB** — analytical storage
+- **Flyway** — database migrations
+- **Docker & Docker Compose**
+- **Gradle**
+- **JUnit 5**
+- **Testcontainers**
+- **Swagger / OpenAPI**
+
 ---
 
-Message Broker: Apache Kafka — асинхронная передача событий.
+## 🏗 Architecture Overview
+
+- **REST API** for managing:
+  - Hotels
+  - Rooms
+  - Bookings
+  - Users
+- **Relational data (PostgreSQL)** for core domain entities
+- **Kafka** for publishing domain events
+- **MongoDB** for analytical and statistical data
+- **Security** implemented using role-based access control (`USER` / `ADMIN`)
+
 ---
 
-Тестирование: JUnit 5, Testcontainers (Postgres, Kafka, MongoDB), Mockito, MockMvc.
+## 🔐 Security
+
+- Authentication and authorization implemented with **Spring Security**
+- Role-based access control:
+  - `USER` — can create and manage own bookings
+  - `ADMIN` — can manage hotels and rooms
+- Method-level security is used for fine-grained access control
+
 ---
 
-Документация: Swagger/OpenAPI 3.
+## ⭐ Key Project Features
+
+### 1. Reliable Booking System
+
+The booking logic includes **overlap protection** to prevent double-booking
+of the same room for intersecting date ranges.
+
+This logic is implemented at the database level using optimized JPQL queries
+in JPA repositories, ensuring high performance and data consistency even
+under concurrent requests.
+
 ---
 
-Инструменты: MapStruct, Lombok, Flyway.
+### 2. Asynchronous Analytics
+
+When a new user is registered or a booking is created, corresponding domain
+events are published to **Kafka**.
+
+A dedicated consumer service processes these events asynchronously and persists
+analytical data into **MongoDB**, allowing the system to collect statistics
+without adding load to the main transactional database.
+
 ---
 
-Ключевые особенности проекта
+### 3. Reporting and Data Export
 
-1. Надежная система бронирования
-Реализована проверка на пересечение дат (Overlap Protection). Система исключает возможность
- забронировать одну и ту же комнату на накладывающиеся периоды. Логика реализована на уровне
- высокопроизводительных SQL-запросов в JPA-репозитории.
- 
-2. Асинхронная аналитика
-При создании нового пользователя или бронирования события отправляются в Kafka. Отдельный
- сервис-слушатель (Consumer) обрабатывает их и сохраняет в MongoDB, что позволяет собирать
- статистику без нагрузки на основную базу данных.
- 
-3. Выгрузка отчетов
-Реализован экспорт накопленной статистики из MongoDB в формат CSV. Поддерживается асинхронная
- обработка запроса на скачивание для эффективной работы с большими объемами данных.
- 
-4. Продвинутая стратегия тестирования
-В проекте реализован паттерн Singleton Testcontainers. Контейнеры (Postgres, Kafka, MongoDB)
- запускаются в статических блоках, что обеспечивает:
-Гарантированную готовность инфраструктуры до старта Spring-контекста.
-Высокую скорость сборки (один запуск контейнеров на все тесты).
-Стабильность прохождения тестов при clean build.
+The application supports exporting accumulated statistics from MongoDB into
+**CSV format**.
 
-5. Безопасность (RBAC)
+The download endpoint is implemented using asynchronous request processing,
+enabling efficient handling of large datasets without blocking request threads.
 
-Регистрация: Доступна всем.
-Администрирование отелей и комнат: Только для ROLE_ADMIN.
-Бронирование: Доступно ROLE_USER и ROLE_ADMIN.
-Статистика: Сбор данных происходит автоматически. Доступ к выгрузке только для ROLE_ADMIN.
 ---
 
-Конфигурация инфраструктуры
+### 4. Advanced Testing Strategy
 
-Приложение настроено на работу с контейнерами, описанными в .\docker\docker-compose.yml. 
+The project uses a **Singleton Testcontainers pattern** for integration testing.
 
-Используемые параметры:
+PostgreSQL, Kafka, and MongoDB containers are started in static initialization
+blocks, which provides:
 
-PostgreSQL:
-Хост: localhost
-Порт: 5438 (внешний порт для подключения приложения)
+- Guaranteed infrastructure readiness before Spring context startup
+- Faster build execution (containers are started once per test run)
+- Stable and reproducible test results during `clean build`
 
-Имя БД: hotels_db
-Инициализация: При первом запуске выполняется скрипт .\docker\init.sql (создание схемы).
-
-Kafka:
-Bootstrap-server: localhost:9092
-Топик: hotel-statistics-topic (создается автоматически при первом событии).
-
-MongoDB:
-URI: mongodb://root:root@localhost:27017/bookingdatabase?authSource=admin
-База данных: bookingdatabase
 ---
 
-Запуск проекта
+### 5. Security (RBAC)
 
-Все команды выполняются из корневого каталога проекта через терминал (CMD или PowerShell).
+Role-based access control is implemented using Spring Security:
 
-Предварительная настройка
+- **Registration:** Available for all users
+- **Hotel and room management:** `ROLE_ADMIN`
+- **Bookings:** `ROLE_USER`, `ROLE_ADMIN`
+- **Statistics export:** Available only for `ROLE_ADMIN`
 
-Для успешного запуска приложения необходимо выполнить следующие шаги:
+All endpoints are protected according to business requirements.
 
-1. Создание конфигурации с секретами
-В корне проекта создайте файл db-secret.yaml. Это необходимо для защиты
- учетных данных (файл добавлен в .gitignore). Укажите в нем параметры подключения
- к вашей базе данных:
-yaml
+---
 
+## 🐳 Infrastructure Configuration
+
+The application is configured to work with containerized infrastructure defined in:
+
+docker/docker-compose.yml
+
+### PostgreSQL
+
+- **Host:** localhost
+- **Port:** 5438 (external port for application connection)
+- **Database name:** `hotels_db`
+- **Initialization:**  
+  On first startup, the script `docker/init.sql` is executed to create the database schema
+
+---
+
+### Kafka
+
+- **Bootstrap server:** `localhost:9092`
+- **Topic:** `hotel-statistics-topic`
+
+The topic is created automatically on the first published event.
+
+Kafka is used for asynchronous delivery of domain events related to user registration
+and booking creation.
+
+---
+
+### MongoDB
+
+- **Connection URI:**
+  mongodb://root:root@localhost:27017/bookingdatabase?authSource=admin
+- **Database:** `bookingdatabase`
+
+MongoDB is used to store analytical and statistical data consumed from Kafka events.
+
+---
+
+## 🚀 Project Startup
+
+All commands are executed from the **root directory** of the project using a terminal
+(**CMD** or **PowerShell**).
+
+### 1. Pre-configuration
+
+Create a file named `db-secret.yaml` in the project root directory.
+This file is required to protect sensitive credentials and is already added
+to `.gitignore`.
+
+Example content:
+
+```yaml
 spring:
-  datasource:
-    username: postgres
-    password: password
+datasource:
+  username: postgres
+  password: password
 
-2. Запуск инфраструктуры (Docker)
+2. Infrastructure Startup (Docker)
 
-Проект требует наличия PostgreSQL, Kafka и MongoDB. В корне проекта находится каталог
- docker, в котором находится файл docker-compose.yaml и старт/стоп скрипты.
- 
-2.1 Запуск всех необходимых сервисов (PostgreSQL, Kafka, MongoDB) в фоновом режиме:
-cmd
+The project requires PostgreSQL, Kafka, and MongoDB.
+
+To start all required services:
+
 .\docker\docker-start.cmd
-	
-Скрипт автоматически определит локальный IP и поднимет контейнеры.
 
-2.2 Остановка и удаление контейнеров:
-cmd
+To stop and remove containers:
+
 .\docker\docker-stop.cmd
 
-3. Настройка портов (если они заняты)
+3. Port Configuration
 
-По умолчанию приложение ожидает следующие порты:
-PostgreSQL: 5438 (не стандартный 5432, чтобы избежать конфликтов с локальной БД).
+Default ports:
+
+PostgreSQL: 5438
+
 Kafka: 9092
+
 MongoDB: 27017
 
-Если необходимо изменить порты, отредактируйте их в docker-compose.yaml и
- соответствующем разделе application.yaml.
- 
-4. Миграции базы данных
-В приложении используется Flyway. При первом запуске таблицы в PostgreSQL будут
- созданы автоматически на основе скриптов в src/main/resources/db/migration.
+If needed, update ports in:
 
-5. Запуск приложения
+docker-compose.yaml
 
-Перед стартом убедитесь, что файл db-secret.yaml создан в корне проекта
- (инструкция в разделе "Настройка").
-Для запуска выполнить:
+corresponding section in application.yaml
 
-cmd
+
+4. Database Migrations
+
+The application uses Flyway.
+
+On first startup, database tables are created automatically from migration scripts located in:
+
+src/main/resources/db/migration
+
+
+5. Application Startup
+
+Ensure db-secret.yaml exists in the project root.
+
+Run the application:
+
 gradlew bootRun
 
-6. Запуск тестов
 
-Проект покрыт интеграционными тестами с использованием Testcontainers.
- Тесты сами управляют жизненным циклом необходимых им контейнеров, поэтому
- предварительный запуск инфраструктуры (п. 2) для них не требуется.
- 
-Для запуска выполнить: 
-cmd
+6. Running Tests
+
+The project is covered with integration tests using Testcontainers.
+
+Infrastructure containers are managed automatically.
+
+Run tests:
+
 gradlew clean test
----
 
-Документация API:
-После запуска доступна по адресу: http://localhost:8080/swagger-ui.html
+
+📘 API Documentation
+
+Swagger UI is available at:
+
+http://localhost:8080/swagger-ui.html
+
+
+⚙ Configuration
+
+Sensitive configuration values (database credentials, secrets) are stored
+outside the repository (see db-secret.yaml, excluded via .gitignore).
+
+
+🎯 Project Goals
+
+This project was created to demonstrate:
+
+Clean backend architecture
+
+Practical use of the Spring ecosystem
+
+Working with relational and non-relational databases
+
+Event-driven communication with Kafka
+
+Writing reliable integration tests
+
+Production-like development practices
+
+
+👨‍💻 Author
+
+Alexey Maleev
+Java Backend Developer / AQA Engineer
+markdown
+[GitHub Profile](https://github.com/AlexeyMaleev)
