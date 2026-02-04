@@ -59,6 +59,8 @@ class BookingControllerTest extends PostgresBaseTest {
     private User testUser;
     private Room testRoom;
 
+    private static final int BOOKING_YEAR = LocalDate.now().getYear() + 1;
+
     @BeforeEach
     void setUp(){
 
@@ -105,9 +107,10 @@ class BookingControllerTest extends PostgresBaseTest {
          and notification is sent to Kafka
         """)
     void whenCreateBooking_thenReturnCreated(String role) throws Exception {
+
         CreateBookingRequest request = new CreateBookingRequest(
-                LocalDate.of(2026, 2, 1),
-                LocalDate.of(2026, 2, 10),
+                LocalDate.of(BOOKING_YEAR, 2, 1),
+                LocalDate.of(BOOKING_YEAR, 2, 10),
                 testUser.getId(),
                 testRoom.getId()
         );
@@ -137,14 +140,14 @@ class BookingControllerTest extends PostgresBaseTest {
     void whenUpdateBookingWithValidRole_thenReturnOk(String role) throws Exception {
 
         Booking booking = saveBooking(
-                LocalDate.of(2026, 3, 1),
-                LocalDate.of(2026, 3, 5));
+                LocalDate.of(BOOKING_YEAR, 3, 1),
+                LocalDate.of(BOOKING_YEAR, 3, 5));
 
         assertEquals(1, bookingRepository.count());
 
         UpdateBookingRequest updateRequest = new UpdateBookingRequest(
-                LocalDate.of(2026, 3, 2),
-                LocalDate.of(2026, 3, 6),
+                LocalDate.of(BOOKING_YEAR, 3, 2),
+                LocalDate.of(BOOKING_YEAR, 3, 6),
                 testRoom.getId()
         );
 
@@ -153,8 +156,8 @@ class BookingControllerTest extends PostgresBaseTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.arrival").value("2026-03-02"))
-                .andExpect(jsonPath("$.departure").value("2026-03-06"));
+                .andExpect(jsonPath("$.arrival").value( BOOKING_YEAR+"-03-02"))
+                .andExpect(jsonPath("$.departure").value(BOOKING_YEAR+"-03-06"));
 
         assertEquals(1, bookingRepository.count());
     }
@@ -169,8 +172,8 @@ class BookingControllerTest extends PostgresBaseTest {
         """)
     void whenGetByIdWithUserValidRole_thenReturnBooking(String role) throws Exception {
         Booking booking = saveBooking(
-                LocalDate.of(2026, 3, 1),
-                LocalDate.of(2026, 3, 5)
+                LocalDate.of(BOOKING_YEAR, 3, 1),
+                LocalDate.of(BOOKING_YEAR, 3, 5)
         );
 
         assertEquals(1, bookingRepository.count());
@@ -192,8 +195,8 @@ class BookingControllerTest extends PostgresBaseTest {
         """)
     void whenDeleteWithValidRole_thenReturnNoContent(String role) throws Exception {
         Booking booking = saveBooking(
-                LocalDate.of(2026, 3, 1),
-                LocalDate.of(2026, 3, 5)
+                LocalDate.of(BOOKING_YEAR, 3, 1),
+                LocalDate.of(BOOKING_YEAR, 3, 5)
         );
 
         assertTrue(bookingRepository.findById(booking.getId()).isPresent());
@@ -215,13 +218,13 @@ class BookingControllerTest extends PostgresBaseTest {
         """)
     void whenCreateBookingWithOverlappingDates_thenBadRequest() throws Exception {
         saveBooking(
-                LocalDate.of(2026, 2, 5),
-                LocalDate.of(2026, 2, 10)
+                LocalDate.of(BOOKING_YEAR, 2, 5),
+                LocalDate.of(BOOKING_YEAR, 2, 10)
         );
 
         CreateBookingRequest request = new CreateBookingRequest(
-                LocalDate.of(2026, 2, 7),
-                LocalDate.of(2026, 2, 12),
+                LocalDate.of(BOOKING_YEAR, 2, 7),
+                LocalDate.of(BOOKING_YEAR, 2, 12),
                 testUser.getId(),
                 testRoom.getId()
         );
@@ -259,8 +262,8 @@ class BookingControllerTest extends PostgresBaseTest {
         """)
     void whenUnauthorizedUserCreate_thenUnauthorized() throws Exception {
         CreateBookingRequest request = new CreateBookingRequest(
-                LocalDate.of(2026, 2, 1),
-                LocalDate.of(2026, 2, 10),
+                LocalDate.of(BOOKING_YEAR, 2, 1),
+                LocalDate.of(BOOKING_YEAR, 2, 10),
                 testUser.getId(),
                 testRoom.getId()
         );
@@ -279,14 +282,14 @@ class BookingControllerTest extends PostgresBaseTest {
         """)
     void whenUnauthorizedUserUpdate_thenUnauthorized() throws Exception {
         Booking booking = saveBooking(
-                LocalDate.of(2026, 3, 1),
-                LocalDate.of(2026, 3, 5));
+                LocalDate.of(BOOKING_YEAR, 3, 1),
+                LocalDate.of(BOOKING_YEAR, 3, 5));
 
         assertEquals(1, bookingRepository.count());
 
         UpdateBookingRequest updateRequest = new UpdateBookingRequest(
-                LocalDate.of(2026, 3, 2),
-                LocalDate.of(2026, 3, 6),
+                LocalDate.of(BOOKING_YEAR, 3, 2),
+                LocalDate.of(BOOKING_YEAR, 3, 6),
                 testRoom.getId()
         );
 
@@ -305,8 +308,8 @@ class BookingControllerTest extends PostgresBaseTest {
         """)
     void whenDeleteAsUnauthorizedUser_thenUnauthorized() throws Exception {
         Booking booking = saveBooking(
-                LocalDate.of(2026, 3, 1),
-                LocalDate.of(2026, 3, 5)
+                LocalDate.of(BOOKING_YEAR, 3, 1),
+                LocalDate.of(BOOKING_YEAR, 3, 5)
         );
 
         assertTrue(bookingRepository.findById(booking.getId()).isPresent());
