@@ -6,7 +6,8 @@ spring:
     name: hotels-app
 
   config:
-    import: "file:./db-secret.yaml"
+#    import: "file:./db-secret.yaml"
+     import: "optional:file:./db-secret.yaml"
 
   kafka:
     bootstrap-servers: localhost:9092
