@@ -1,5 +1,9 @@
 name: Java CI with Gradle
 
+env:
+  TESTCONTAINERS_RYUK_DISABLED: true
+  run: ./gradlew test --info
+
 on:
   push:
     branches: [ "main", "feature/**" ]
