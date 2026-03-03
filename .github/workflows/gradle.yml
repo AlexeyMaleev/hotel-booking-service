@@ -1,0 +1,35 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main", "feature/**" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # В Ubuntu на GitHub Docker уже встроен
+
+    steps:
+      - uses: actions/checkout@v4 # Скачиваем код
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build and Run Tests
+        # Testcontainers сами поднимут Postgres и Kafka в Docker-раннере GitHub
+        run: ./gradlew test
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: build/reports/tests/test/ # Путь к отчетам Gradle
