@@ -40,6 +40,8 @@ and further refined as a portfolio project.
 - **JUnit 5**
 - **Testcontainers**
 - **Swagger / OpenAPI**
+- **Awaitility** — for testing asynchronous systems
+- **Project Reactor** — for reactive event processing (Kafka to MongoDB)
 
 ---
 
