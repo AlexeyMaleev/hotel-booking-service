@@ -51,6 +51,7 @@ dependencies {
 	testImplementation("org.testcontainers:kafka")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation("org.awaitility:awaitility:4.2.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

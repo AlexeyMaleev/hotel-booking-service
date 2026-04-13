@@ -1,6 +1,7 @@
 package com.example.hotels_app.statistics.controller;
 
 import com.example.hotels_app.FullStackBaseTest;
+import com.example.hotels_app.model.statistics.ActionType;
 import com.example.hotels_app.model.statistics.UserActionLog;
 import com.example.hotels_app.statistics.repository.HotelStatisticsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,8 @@ class StatisticsControllerTest extends FullStackBaseTest {
         UserActionLog log1 = new UserActionLog(
                 null,
                 101L,
-                "REGISTRATION",
+                //"REGISTRATION",
+                ActionType.REGISTRATION.name(),
                 null,
                 null,
                 Instant.now()
@@ -58,7 +60,8 @@ class StatisticsControllerTest extends FullStackBaseTest {
         UserActionLog log2 = new UserActionLog(
                 null,
                 102L,
-                "BOOKING",
+                //"BOOKING",
+                ActionType.BOOKING.name(),
                 LocalDate.of(2026, 1, 20),
                 LocalDate.of(2026, 1, 25),
                 Instant.now()
@@ -84,8 +87,13 @@ class StatisticsControllerTest extends FullStackBaseTest {
         String expectedHeader = "ID,ActionType,UserID,Arrival,Departure,CreatedAt";
         assertEquals(expectedHeader, lines[0].trim(), "Заголовки CSV не совпадают с ожидаемыми");
 
-        assertTrue(content.contains("REGISTRATION,101"), "Строка регистрации сформирована неверно");
-        assertTrue(content.contains("BOOKING,102,2026-01-20,2026-01-25"), "Строка бронирования сформирована неверно");
+//        assertTrue(content.contains("REGISTRATION,101"), "Строка регистрации сформирована неверно");
+//        assertTrue(content.contains("BOOKING,102,2026-01-20,2026-01-25"), "Строка бронирования сформирована неверно");
+
+        assertTrue(content.contains( ActionType.REGISTRATION.name()+",101"),
+                "Строка регистрации сформирована неверно");
+        assertTrue(content.contains(ActionType.BOOKING.name()+",102,2026-01-20,2026-01-25"),
+                "Строка бронирования сформирована неверно");
     }
 
     @Test
