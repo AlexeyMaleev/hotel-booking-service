@@ -38,9 +38,11 @@ and further refined as a portfolio project.
 - **Docker & Docker Compose**
 - **Gradle**
 - **JUnit 5**
-- **Testcontainers**
-- **Swagger / OpenAPI**
-- **Awaitility** — for testing asynchronous systems
+  - MockMvc — for fluent API testing, security validation, and E2E flows.
+  - AssertJ / JUnit 5 Assertions — for clean and readable test checks.
+- **Testcontainers** — for isolated infrastructure testing (Postgres, Kafka, MongoDB).
+- **Swagger / OpenAPI** — for API documentation and manual testing.
+- **Awaitility** — for testing asynchronous event-driven systems.
 - **Project Reactor** — for reactive event processing (Kafka to MongoDB)
 
 ---
@@ -110,9 +112,11 @@ The project uses a **Singleton Testcontainers pattern** for integration testing.
 PostgreSQL, Kafka, and MongoDB containers are started in static initialization
 blocks, which provides:
 
-- Guaranteed infrastructure readiness before Spring context startup
-- Faster build execution (containers are started once per test run)
-- Stable and reproducible test results during `clean build`
+- **Guaranteed infrastructure readiness** before Spring context startup.
+- **Faster build execution** — containers are started once per test run, covering both Integration and E2E suites.
+- **Full-cycle E2E Validation** — tests simulate real user scenarios via MockMvc, including Spring Security checks, Kafka event streaming, and final state verification in MongoDB.
+- **Reliable Async Assertions** — using Awaitility to handle eventual consistency when verifying data in MongoDB after Kafka processing.
+- **Stable and reproducible results** during `clean build` in any environment.
 
 ---
 
@@ -126,6 +130,16 @@ Role-based access control is implemented using Spring Security:
 - **Statistics export:** Available only for `ROLE_ADMIN`
 
 All endpoints are protected according to business requirements.
+
+---
+
+### 6. End-to-End (E2E) Testing Flow
+The project includes complex E2E tests that validate the entire business process across multiple infrastructure layers:
+- **Trigger:** A REST API call initiates a booking or registration.
+- **Process:** The system validates security (RBAC), executes transactional logic in **PostgreSQL**, and emits a **Kafka** event.
+- **Async Validation:** Using **Awaitility**, the test waits for the asynchronous consumer to process the Kafka message and verifies the final state in **MongoDB**.
+
+This ensures that all micro-integrations work together seamlessly in a production-like environment.
 
 ---
 
