@@ -11,4 +11,8 @@ spring:
   kafka:
     bootstrap-servers: ${KOTEST_KAFKA_SERVERS}
 
+app:
+  kafka:
+    kafkaMessageTopic: "hotel-statistics-topic-kotest"
+    kafkaMessageGroupId: "statistics-group-id-kotest"
   # Остальные общие настройки (flyway, jpa) подтянутся из основного application.yml

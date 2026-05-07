@@ -117,7 +117,8 @@ public class BookingE2ETest extends E2EBaseTest {
         // 4. Verify MongoDB Integration (Async via Awaitility)
         await()
                 .atMost(15, SECONDS)
-                .pollInterval(500, java.util.concurrent.TimeUnit.MILLISECONDS)
+                .pollDelay(2, java.util.concurrent.TimeUnit.SECONDS) // Даем 2 секунду форы перед первой проверкой
+                .pollInterval(1, java.util.concurrent.TimeUnit.SECONDS) // Проверяем раз в секунду, не частим
                 .untilAsserted(() -> {
                     var logs = statisticsRepository.findAll().collectList().block();
                     assertNotNull(logs, "Statistics logs list should not be null");
