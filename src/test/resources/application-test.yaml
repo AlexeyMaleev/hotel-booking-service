@@ -14,7 +14,8 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/testdb
+#      uri: mongodb://localhost:27017/testdb
+      uri: ${MONGODB_URL:mongodb://localhost:27017/testdb}
 
   flyway:
     enabled: true
@@ -23,7 +24,8 @@ spring:
     clean-disabled: false
 
   kafka:
-    bootstrap-servers: localhost:9092
+#    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

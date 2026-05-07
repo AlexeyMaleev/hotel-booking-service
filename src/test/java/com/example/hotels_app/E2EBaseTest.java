@@ -41,7 +41,8 @@ public abstract class E2EBaseTest extends BaseTest {
         mongo = new MongoDBContainer("mongo:6.0");
         kafka = new KafkaContainer(DockerImageName.parse("apache/kafka:3.7.2"));
 
-        Stream.of(postgres, mongo, kafka).parallel().forEach(GenericContainer::start);
+//        Stream.of(postgres, mongo, kafka).parallel().forEach(GenericContainer::start);
+        Stream.of(postgres, mongo, kafka).forEach(GenericContainer::start);
     }
 
     @DynamicPropertySource

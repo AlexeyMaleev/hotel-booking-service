@@ -81,5 +81,8 @@ dependencies {
 }
 
 tasks.withType<Test> {
+	// Sequential execution to prevent OOM in CI/CD
+	maxParallelForks = 1
+
 	useJUnitPlatform()
 }

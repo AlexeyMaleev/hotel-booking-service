@@ -65,6 +65,14 @@ to ensure smooth migration and maintainability.
 
 ---
 
+### 🔄 CI/CD Optimization
+- **Stable Infrastructure**: Sequential test execution (`maxParallelForks = 1`) is
+configured to ensure stability in resource-constrained environments
+(like GitHub Actions) when running multiple heavy Docker containers
+(PostgreSQL, Kafka, MongoDB) simultaneously.
+
+---
+
 ## 🔐 Security
 
 - Authentication and authorization implemented with **Spring Security**
