@@ -4,7 +4,6 @@ import com.example.hotels_app.repository.UserRepository;
 import com.example.hotels_app.statistics.repository.HotelStatisticsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.stats.StatisticsRepository;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,7 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.util.stream.Stream;
 
-public abstract class E2EBaseTest extends BaseTest{
+public abstract class E2EBaseTest extends BaseTest {
 
     @Autowired
     protected UserRepository userRepository;

@@ -6,11 +6,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 //@Testcontainers
-public abstract class PostgresBaseTest extends BaseTest{
+public abstract class PostgresBaseTest extends BaseTest {
 
     @MockitoBean
     protected KafkaTemplate<String, Object> kafkaTemplate;

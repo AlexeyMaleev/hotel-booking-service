@@ -1,5 +1,9 @@
 plugins {
 	java
+	// Добавляем Kotlin
+	kotlin("jvm") version "1.9.23"
+	kotlin("plugin.spring") version "1.9.23"
+
 	id("org.springframework.boot") version "3.5.8"
 	id("io.spring.dependency-management") version "1.1.7"
 }
@@ -11,6 +15,14 @@ description = "Final work for SpringFramework course from Skillbox"
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+// Настройка Kotlin
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+	kotlinOptions {
+		freeCompilerArgs = listOf("-Xjsr305=strict")
+		jvmTarget = "21"
 	}
 }
 
@@ -39,6 +51,9 @@ dependencies {
 	implementation("org.flywaydb:flyway-database-postgresql:10.0.0")
 	runtimeOnly("org.postgresql:postgresql")
 
+	// Kotlin Runtime
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	implementation("org.mapstruct:mapstruct:1.5.3.Final")
@@ -53,6 +68,16 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("org.awaitility:awaitility:4.2.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	// --- KOTEST ---
+	testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+	testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+	testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+	testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("com.ninja-squad:springmockk:4.0.2")
+	testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
+	testImplementation("io.kotest:kotest-framework-datatest:5.8.0")
 }
 
 tasks.withType<Test> {
