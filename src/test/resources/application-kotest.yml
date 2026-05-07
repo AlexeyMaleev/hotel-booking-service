@@ -1,0 +1,18 @@
+# src/test/resources/application-kotest.yml
+spring:
+  datasource:
+    url: ${KOTEST_DB_URL} # Будем прокидывать через переменную или оставим пустым
+    driver-class-name: org.postgresql.Driver
+
+  data:
+    mongodb:
+      uri: ${KOTEST_MONGO_URI}
+
+  kafka:
+    bootstrap-servers: ${KOTEST_KAFKA_SERVERS}
+
+app:
+  kafka:
+    kafkaMessageTopic: "hotel-statistics-topic-kotest"
+    kafkaMessageGroupId: "statistics-group-id-kotest"
+  # Остальные общие настройки (flyway, jpa) подтянутся из основного application.yml

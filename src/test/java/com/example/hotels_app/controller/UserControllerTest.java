@@ -41,7 +41,7 @@ class UserControllerTest extends PostgresBaseTest {
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
-        Mockito.reset(kafkaTemplate); // Важно для верификации в цикле
+        Mockito.reset(kafkaTemplate);
     }
 
     @ParameterizedTest(name = "Test {index}: create user with role {0}")

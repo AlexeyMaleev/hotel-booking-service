@@ -25,8 +25,8 @@ and further refined as a portfolio project.
 
 ## 🛠 Tech Stack
 
-- **Java 21**
-- **Spring Boot**
+- **Java 21 & Kotlin (active migration to Kotlin for test suites)**
+- **Spring Boot 3**
   - Spring Web
   - Spring Data JPA
   - Spring Security
@@ -37,12 +37,14 @@ and further refined as a portfolio project.
 - **Flyway** — database migrations
 - **Docker & Docker Compose**
 - **Gradle**
-- **JUnit 5**
+- **JUnit 5 & Kotest**
   - MockMvc — for fluent API testing, security validation, and E2E flows.
-  - AssertJ / JUnit 5 Assertions — for clean and readable test checks.
+  - AssertJ / JUnit 5 Assertions & Kotest Matchers — for clean and readable test checks.
 - **Testcontainers** — for isolated infrastructure testing (Postgres, Kafka, MongoDB).
+  - *Java:* traditional JUnit 5 integration.
+  - *Kotlin:* advanced **Lazy Singleton pattern** for optimized resource usage.
+- **Awaitility & Awaitility-Kotlin** — for testing eventual consistency in asynchronous event-driven flows.
 - **Swagger / OpenAPI** — for API documentation and manual testing.
-- **Awaitility** — for testing asynchronous event-driven systems.
 - **Project Reactor** — for reactive event processing (Kafka to MongoDB)
 
 ---
@@ -58,6 +60,16 @@ and further refined as a portfolio project.
 - **Kafka** for publishing domain events
 - **MongoDB** for analytical and statistical data
 - **Security** implemented using role-based access control (`USER` / `ADMIN`)
+- **Testing Strategy:** Side-by-Side execution of JUnit 5 (Java) and Kotest (Kotlin)
+to ensure smooth migration and maintainability.
+
+---
+
+### 🔄 CI/CD Optimization
+- **Stable Infrastructure**: Sequential test execution (`maxParallelForks = 1`) is
+configured to ensure stability in resource-constrained environments
+(like GitHub Actions) when running multiple heavy Docker containers
+(PostgreSQL, Kafka, MongoDB) simultaneously.
 
 ---
 
@@ -117,6 +129,9 @@ blocks, which provides:
 - **Full-cycle E2E Validation** — tests simulate real user scenarios via MockMvc, including Spring Security checks, Kafka event streaming, and final state verification in MongoDB.
 - **Reliable Async Assertions** — using Awaitility to handle eventual consistency when verifying data in MongoDB after Kafka processing.
 - **Stable and reproducible results** during `clean build` in any environment.
+- **Parallel Infrastructure Management:**
+  - Java suites use standard Testcontainers integration for stability.
+  - Kotlin suites leverage a **Lazy Singleton pattern** with `ApplicationContextInitializer` for dynamic port mapping and faster execution.
 
 ---
 
@@ -199,8 +214,9 @@ spring:
 datasource:
   username: postgres
   password: password
-
-2. Infrastructure Startup (Docker)
+```  
+  
+### 2. Infrastructure Startup (Docker)
 
 The project requires PostgreSQL, Kafka, and MongoDB.
 
@@ -212,7 +228,7 @@ To stop and remove containers:
 
 .\docker\docker-stop.cmd
 
-3. Port Configuration
+### 3. Port Configuration
 
 Default ports:
 
@@ -229,7 +245,7 @@ docker-compose.yaml
 corresponding section in application.yaml
 
 
-4. Database Migrations
+### 4. Database Migrations
 
 The application uses Flyway.
 
@@ -238,7 +254,7 @@ On first startup, database tables are created automatically from migration scrip
 src/main/resources/db/migration
 
 
-5. Application Startup
+### 5. Application Startup
 
 Ensure db-secret.yaml exists in the project root.
 
@@ -247,11 +263,10 @@ Run the application:
 gradlew bootRun
 
 
-6. Running Tests
+### 6. Running Tests
 
-The project is covered with integration tests using Testcontainers.
-
-Infrastructure containers are managed automatically.
+The project uses a hybrid engine (JUnit 5 + Kotest). Infrastructure is managed automatically via Testcontainers.
+Run all tests (Java & Kotlin):
 
 Run tests:
 
