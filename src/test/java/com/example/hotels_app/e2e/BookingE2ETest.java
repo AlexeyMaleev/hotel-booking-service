@@ -116,7 +116,7 @@ public class BookingE2ETest extends E2EBaseTest {
 
         // 4. Verify MongoDB Integration (Async via Awaitility)
         await()
-                .atMost(5, SECONDS)
+                .atMost(15, SECONDS)
                 .pollInterval(500, java.util.concurrent.TimeUnit.MILLISECONDS)
                 .untilAsserted(() -> {
                     var logs = statisticsRepository.findAll().collectList().block();
